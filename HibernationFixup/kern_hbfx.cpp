@@ -255,34 +255,34 @@ IOReturn HBFX::IOPMrootDomain_setMaintenanceWakeCalendar(IOPMrootDomain* that, I
 
 	IOReturn result = KERN_SUCCESS;
 
-	if (callbackHBFX->sleepServiceWake) {
-		DBGLOG("HBFX", "setMaintenanceWakeCalendar called after sleepServiceWake is set");
-		return result;
-	}
+	// if (callbackHBFX->sleepServiceWake) {
+	// 	DBGLOG("HBFX", "setMaintenanceWakeCalendar called after sleepServiceWake is set");
+	// 	return result;
+	// }
 
-	uint32_t standby_delay = 0;
-	bool pmset_default_mode = false;
-	callbackHBFX->wakeCalendarSet = false;
-	if (callbackHBFX->isStandbyEnabled(standby_delay, pmset_default_mode) && pmset_default_mode && standby_delay != 0)
-	{
-		struct tm tm;
-		struct timeval tv;
-		microtime(&tv);
+	// uint32_t standby_delay = 0;
+	// bool pmset_default_mode = false;
+	// callbackHBFX->wakeCalendarSet = false;
+	// if (callbackHBFX->isStandbyEnabled(standby_delay, pmset_default_mode) && pmset_default_mode && standby_delay != 0)
+	// {
+	// 	struct tm tm;
+	// 	struct timeval tv;
+	// 	microtime(&tv);
 		
-		gmtime_r(tv.tv_sec, &tm);
-		DBGLOG("HBFX", "Current time: %02d.%02d.%04d %02d:%02d:%02d", tm.tm_mday, tm.tm_mon, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec);
+	// 	gmtime_r(tv.tv_sec, &tm);
+	// 	DBGLOG("HBFX", "Current time: %02d.%02d.%04d %02d:%02d:%02d", tm.tm_mday, tm.tm_mon, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec);
 
-        tv.tv_sec += standby_delay;
-		gmtime_r(tv.tv_sec, &tm);
-		DBGLOG("HBFX", "Postpone maintenance wake to: %02d.%02d.%04d %02d:%02d:%02d", tm.tm_mday, tm.tm_mon, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec);
+ //        tv.tv_sec += standby_delay;
+	// 	gmtime_r(tv.tv_sec, &tm);
+	// 	DBGLOG("HBFX", "Postpone maintenance wake to: %02d.%02d.%04d %02d:%02d:%02d", tm.tm_mday, tm.tm_mon, tm.tm_year, tm.tm_hour, tm.tm_min, tm.tm_sec);
 
-		*calendar = { static_cast<UInt32>(tm.tm_year), static_cast<UInt8>(tm.tm_mon), static_cast<UInt8>(tm.tm_mday),
-			static_cast<UInt8>(tm.tm_hour), static_cast<UInt8>(tm.tm_min), static_cast<UInt8>(tm.tm_sec), calendar->selector };
-		result = FunctionCast(IOPMrootDomain_setMaintenanceWakeCalendar, callbackHBFX->orgIOPMrootDomain_setMaintenanceWakeCalendar)(that, calendar);
-		callbackHBFX->wakeCalendarSet = (result == KERN_SUCCESS);
-	}
-	else
-		result = FunctionCast(IOPMrootDomain_setMaintenanceWakeCalendar, callbackHBFX->orgIOPMrootDomain_setMaintenanceWakeCalendar)(that, calendar);
+	// 	*calendar = { static_cast<UInt32>(tm.tm_year), static_cast<UInt8>(tm.tm_mon), static_cast<UInt8>(tm.tm_mday),
+	// 		static_cast<UInt8>(tm.tm_hour), static_cast<UInt8>(tm.tm_min), static_cast<UInt8>(tm.tm_sec), calendar->selector };
+	// 	result = FunctionCast(IOPMrootDomain_setMaintenanceWakeCalendar, callbackHBFX->orgIOPMrootDomain_setMaintenanceWakeCalendar)(that, calendar);
+	// 	callbackHBFX->wakeCalendarSet = (result == KERN_SUCCESS);
+	// }
+	// else
+	// 	result = FunctionCast(IOPMrootDomain_setMaintenanceWakeCalendar, callbackHBFX->orgIOPMrootDomain_setMaintenanceWakeCalendar)(that, calendar);
 
 	return result;
 }
@@ -664,7 +664,7 @@ void HBFX::processKernel(KernelPatcher &patcher)
 				{"__ZN14IOPMrootDomain15requestFullWakeENS_14FullWakeReasonE", IOPMrootDomain_requestFullWake, orgIOPMrootDomain_requestFullWake},
 				{"_IOHibernateSystemSleep", IOHibernateSystemSleep, orgIOHibernateSystemSleep},
 				{"_IOHibernateSystemWake", IOHibernateSystemWake, orgIOHibernateSystemWake},
-				// {"__ZN14IOPMrootDomain26setMaintenanceWakeCalendarEPK18IOPMCalendarStruct", IOPMrootDomain_setMaintenanceWakeCalendar, orgIOPMrootDomain_setMaintenanceWakeCalendar}
+				{"__ZN14IOPMrootDomain26setMaintenanceWakeCalendarEPK18IOPMCalendarStruct", IOPMrootDomain_setMaintenanceWakeCalendar, orgIOPMrootDomain_setMaintenanceWakeCalendar}
 			};
 			size_t size = arrsize(requests) - (doNotOverrideWakeUpTime ? 1 : 0);
 			if (!patcher.routeMultipleLong(KernelPatcher::KernelID, requests, size)) {
