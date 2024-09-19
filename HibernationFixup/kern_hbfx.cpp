@@ -664,7 +664,7 @@ void HBFX::processKernel(KernelPatcher &patcher)
 				{"__ZN14IOPMrootDomain15requestFullWakeENS_14FullWakeReasonE", IOPMrootDomain_requestFullWake, orgIOPMrootDomain_requestFullWake},
 				{"_IOHibernateSystemSleep", IOHibernateSystemSleep, orgIOHibernateSystemSleep},
 				{"_IOHibernateSystemWake", IOHibernateSystemWake, orgIOHibernateSystemWake},
-				{"__ZN14IOPMrootDomain26setMaintenanceWakeCalendarEPK18IOPMCalendarStruct", IOPMrootDomain_setMaintenanceWakeCalendar, orgIOPMrootDomain_setMaintenanceWakeCalendar}
+				// {"__ZN14IOPMrootDomain26setMaintenanceWakeCalendarEPK18IOPMCalendarStruct", IOPMrootDomain_setMaintenanceWakeCalendar, orgIOPMrootDomain_setMaintenanceWakeCalendar}
 			};
 			size_t size = arrsize(requests) - (doNotOverrideWakeUpTime ? 1 : 0);
 			if (!patcher.routeMultipleLong(KernelPatcher::KernelID, requests, size)) {
